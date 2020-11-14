@@ -12,10 +12,12 @@
   <div class="star star5"></div>
 
   <div class="error">
-    <div class="error__title">Welcome admin!</div>
-    <div class="class error__description">Choose a dasboard down below</div>
-    <button @click.prevent="toProduct" class="error__button error__button--active">Product</button>
-    <button @click.prevent="toBanner" class="error__button error__button--active">Banner</button>
+    <div class="error__title">404</div>
+    <div class="error__subtitle">Hmmm...</div>
+    <div class="error__description">It looks like one of the  developers fell asleep</div>
+    <button v-if="!this.token" @click.prevent='backToLogin' class="error__button error__button--active">Login</button>
+    <button v-else @click.prevent='backToDashboard' class="error__button error__button--active">Back to Home</button>
+    <a href="https://github.com/itsagra" class="error__button" target="_blank">CONTACT</a>
   </div>
 
   <div class="astronaut">
@@ -50,17 +52,18 @@
 
 <script>
 export default {
-  name: 'Home',
+  name: 'ErrorNotFound',
   data () {
     return {
+      token: ''
     }
   },
   methods: {
-    toProduct () {
-      this.$router.push({ name: 'Dashboard' })
+    backToLogin () {
+      this.$router.push('/login')
     },
-    toBanner () {
-      this.$router.push({ name: 'BannerDashboard' })
+    backToDashboard () {
+      this.$router.push({ name: 'HomePage' })
     }
   },
   created () {
@@ -188,7 +191,7 @@ body {
 }
 
 .error__title {
-  font-size: 3em;
+  font-size: 10em;
 }
 
 .error__subtitle {

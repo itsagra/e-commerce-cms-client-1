@@ -21,6 +21,7 @@ export default {
   },
   created () {
     this.$store.dispatch('fetchProducts')
+    this.$store.commit('setCurrentDashboard', 'Product')
   }
 }
 </script>

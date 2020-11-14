@@ -7,12 +7,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import '@/assets/css/style.css'
 import store from './store'
-import VueSweetalert2 from 'vue-sweetalert2'
+import Swal from 'vue-sweetalert2'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
-Vue.use(VueSweetalert2)
+Vue.use(Swal)
 Vue.component('BModal', BModal)
 Vue.directive('b-modal', VBModal)
 

@@ -7,7 +7,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    products: []
+    products: [],
+    banners: [],
+    currentDashboard: ''
   },
   mutations: {
     setProducts (state, payload) {
@@ -16,8 +18,20 @@ export default new Vuex.Store({
     addNewProduct (state, payload) {
       state.products.push(payload)
     },
-    deleteOne (state, id) {
+    deleteOneProduct (state, id) {
       state.products = state.products.filter(el => el.id !== id)
+    },
+    setBanners (state, payload) {
+      state.banners = payload
+    },
+    addNewBanner (state, payload) {
+      state.banners.push(payload)
+    },
+    deleteOneBanner (state, id) {
+      state.banners = state.banners.filter(el => el.id !== id)
+    },
+    setCurrentDashboard (state, dashboardName) {
+      state.currentDashboard = dashboardName
     }
   },
   actions: {
@@ -79,7 +93,7 @@ export default new Vuex.Store({
                   showConfirmButton: false,
                   timer: 2500
                 })
-                context.commit('deleteOne', id)
+                context.commit('deleteOneProduct', id)
               })
               .catch(err => {
                 Swal.fire({
@@ -93,7 +107,79 @@ export default new Vuex.Store({
     },
     editProduct (context, payload) {
       const token = localStorage.token
-      axios.put(`/products/${payload.id}`, { headers: { token } })
+      return axios.put(`/products/${payload.id}`, payload, { headers: { token } })
+    },
+    // Banner section
+    fetchBanners (context) {
+      const token = localStorage.token
+      axios.get('/banners', { headers: { token } })
+        .then(({ data }) => {
+          context.commit('setBanners', data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    addBanner (context, payload) {
+      const token = localStorage.token
+      axios.post('/banners', payload, { headers: { token } })
+        .then(({ data }) => {
+          context.commit('addNewBanner', data)
+          Swal.fire({
+            imageUrl: 'https://filmdaily.co/wp-content/uploads/2020/10/amongus-01-8.jpg',
+            imageWidth: 400,
+            imageHeight: 200,
+            title: 'New banner successfully added!',
+            showConfirmButton: false,
+            timer: 2500
+          })
+        })
+        .catch(err => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: err.response.data.msg
+          })
+        })
+    },
+    deleteBanner (context, id) {
+      Swal.fire({
+        title: 'Are you sure want to delete?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      })
+        .then((result) => {
+          if (result.isConfirmed) {
+            const token = localStorage.token
+            axios.delete(`/banners/${id}`, { headers: { token } })
+              .then(({ data }) => {
+                Swal.fire({
+                  imageUrl: 'https://filmdaily.co/wp-content/uploads/2020/10/amongus-01-8.jpg',
+                  imageWidth: 400,
+                  imageHeight: 200,
+                  title: 'Banner successfully deleted!',
+                  showConfirmButton: false,
+                  timer: 2500
+                })
+                context.commit('deleteOneBanner', id)
+              })
+              .catch(err => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: err.response.data.msg
+                })
+              })
+          }
+        })
+    },
+    editBanner (context, payload) {
+      const token = localStorage.token
+      return axios.put(`/banners/${payload.id}`, payload, { headers: { token } })
     }
   },
   modules: {

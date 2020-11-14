@@ -1,18 +1,21 @@
 <template>
     <tr class="text-center">
-        <th scope="row">{{product.id}}</th>
-        <td v-if="!showFormEdit"><img :src="product.image_url" :alt="product.name" width="200px"></td>
-        <td v-if="!showFormEdit">{{product.name}}</td>
-        <td v-if="!showFormEdit">Rp. {{rpFormat(product.price)}}</td>
-        <td v-if="!showFormEdit">{{product.stock}}</td>
+        <th scope="row">{{banner.id}}</th>
+        <td v-if="!showFormEdit"><img :src="banner.image_url" :alt="banner.title" width="200px"></td>
+        <td v-if="!showFormEdit">{{banner.title}}</td>
+        <td v-if="!showFormEdit">{{status(banner.status)}}</td>
         <div v-if="!showFormEdit" class="d-flex justify-content-around mt-3" style="max-width: 60vh;">
           <button @click.prevent="showEdit" type="button" class="btn btn-outline-secondary">Edit</button>
-          <button @click.prevent="deleteProduct(product.id)" type="button" class="btn btn-outline-danger">Delete</button>
+          <button @click.prevent="deleteBanner(banner.id)" type="button" class="btn btn-outline-danger">Delete</button>
         </div>
-        <td v-if="showFormEdit"><input type="text" v-model="dataProductEdit.image_url" required><br> URL</td>
-        <td v-if="showFormEdit"><input type="text" v-model="dataProductEdit.name" required><br> Name</td>
-        <td v-if="showFormEdit"><input type="text" v-model="dataProductEdit.price" required><br> Price</td>
-        <td v-if="showFormEdit"><input type="text" v-model="dataProductEdit.stock" required><br> Stock</td>
+        <td v-if="showFormEdit"><input type="text" v-model="dataBannerEdit.image_url" required><br> URL</td>
+        <td v-if="showFormEdit"><input type="text" v-model="dataBannerEdit.title" required><br> Title</td>
+        <td v-if="showFormEdit">
+          <input type="radio" v-model="dataBannerEdit.status" :checked="dataBannerEdit.status === true" value="true">
+          <label for="false">Enable</label><br>
+          <input type="radio" v-model="dataBannerEdit.status" :checked="dataBannerEdit.status === false" value="false">
+          <label for="true">Disable</label><br>
+        </td>
         <div v-if="showFormEdit" class="d-flex justify-content-around mt-3" style="max-width: 60vh;">
           <button @click.prevent="saveEdit" type="button" class="btn btn-outline-primary mr-2 mb-3">Save Changes</button>
           <button @click.prevent="cancelEdit" type="button" class="btn btn-outline-danger mr-2 mb-3">Cancel</button>
@@ -23,40 +26,37 @@
 <script>
 import Swal from 'sweetalert2'
 export default {
-  name: 'ProductBodyTable',
-  props: ['product'],
+  name: 'BannerBodyTable',
+  props: ['banner'],
   data () {
     return {
       showFormEdit: false,
-      dataProductEdit: {}
+      dataBannerEdit: {}
     }
   },
   components: {
   },
   methods: {
-    rpFormat (num) {
-      return new Intl.NumberFormat('id').format(num)
-    },
     cancelEdit () {
       this.showFormEdit = false
     },
-    deleteProduct (id) {
-      this.$store.dispatch('deleteProduct', id)
+    deleteBanner (id) {
+      this.$store.dispatch('deleteBanner', id)
     },
     showEdit () {
-      this.dataProductEdit = this.product
+      this.dataBannerEdit = this.banner
       this.showFormEdit = true
     },
     saveEdit () {
-      this.$store.dispatch('editProduct', this.dataProductEdit)
+      this.$store.dispatch('editBanner', this.dataBannerEdit)
         .then(({ data }) => {
-          this.$store.dispatch('fetchProducts')
+          this.$store.dispatch('fetchBanners')
           this.showFormEdit = false
           Swal.fire({
             imageUrl: 'https://filmdaily.co/wp-content/uploads/2020/10/amongus-01-8.jpg',
             imageWidth: 400,
             imageHeight: 200,
-            title: 'Product successfully updated!',
+            title: 'Banner successfully updated!',
             showConfirmButton: false,
             timer: 2500
           })
@@ -68,6 +68,13 @@ export default {
             text: err.response.data.msg
           })
         })
+    },
+    status (bool) {
+      if (bool) {
+        return 'Enabled'
+      } else {
+        return 'Disabled'
+      }
     }
   }
 }

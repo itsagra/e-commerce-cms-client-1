@@ -47,7 +47,7 @@
         </div>
       </div>
       <template #modal-footer="{cancel}">
-        <b-button size="m" variant="primary" @click="addProduct">
+        <b-button size="m" variant="primary" @click.prevent="addProduct">
           Add Product
         </b-button>
         <b-button size="m" variant="danger" @click="cancel()">

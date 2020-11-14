@@ -1,13 +1,15 @@
 <template>
   <div>
     <nav class="navbar navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">
+      <a @click.prevent="toHome" class="navbar-brand" href="#">
         <img src="../assets/img/title-logo.png" width="70px" height="55px" class="d-inline-block align-top rounded-circle" alt="">
       </a>
         <div class="navbar-nav">
           <div class="d-flex justify-content-start">
-          <a class="nav-item nav-link mx-1" href="#">Dashboard <span class="sr-only">(current)</span></a>
-          <a class="nav-item nav-link mx-1" href="#" v-b-modal.modal-2>Add Product</a>
+          <a @click.prevent="toBannerDashboard" v-if="this.$store.state.currentDashboard === 'Product'" class="nav-item nav-link mx-5" href="#">Switch to Banner Dashboard <span class="sr-only">(current)</span></a>
+          <a v-if="this.$store.state.currentDashboard === 'Product'" class="nav-item nav-link mx-5" href="#" v-b-modal.modal-2>Add Product</a>
+          <a @click.prevent="toProductDashboard" v-if="this.$store.state.currentDashboard === 'Banner'" class="nav-item nav-link mx-5" href="#">Switch to Product Dashboard <span class="sr-only">(current)</span></a>
+          <a v-if="this.$store.state.currentDashboard === 'Banner'" class="nav-item nav-link mx-5" href="#" v-b-modal.modal-3>Add Banner</a>
           </div>
         </div>
       <button
@@ -18,16 +20,19 @@
       </button>
     </nav>
     <AddForm/>
+    <AddBanner/>
   </div>
 </template>
 
 <script>
 import Swal from 'sweetalert2'
 import AddForm from './AddForm'
+import AddBanner from './banner/AddBanner'
 export default {
   name: 'Navbar',
   components: {
-    AddForm
+    AddForm,
+    AddBanner
   },
   methods: {
     logout () {
@@ -44,9 +49,19 @@ export default {
             'Please come back anytime!',
             'success'
           )
-          this.$router.push({ name: 'HomePage' })
+          localStorage.clear()
+          this.$router.push('/')
         }
       })
+    },
+    toBannerDashboard () {
+      this.$router.push({ name: 'BannerDashboard' })
+    },
+    toProductDashboard () {
+      this.$router.push({ name: 'Dashboard' })
+    },
+    toHome () {
+      this.$router.push({ name: 'HomePage' })
     }
   }
 }
